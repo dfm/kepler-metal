@@ -1,4 +1,12 @@
-# Solving Kepler's equation using an Apple GPU
+# Solving Kepler's equation on an Apple GPU
+
+```bash
+mkdir build
+cd build
+cmake ..
+cmake --build .
+src/demo
+```
 
 Refs:
 
