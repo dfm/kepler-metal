@@ -4,6 +4,7 @@
 
 #include <Metal/Metal.hpp>
 #include <chrono>
+#include <cmath>
 #include <iostream>
 
 int main(int argc, const char *argv[]) {
@@ -23,7 +24,7 @@ int main(int argc, const char *argv[]) {
     exit(-1);
   }
 
-  auto fn_name = NS::String::string("work_on_arrays", NS::ASCIIStringEncoding);
+  auto fn_name = NS::String::string("solve_kepler", NS::ASCIIStringEncoding);
   auto computeFunction = lib->newFunction(fn_name);
   if (!computeFunction) {
     std::cerr << "Failed to find the compute function.\n";
@@ -48,8 +49,8 @@ int main(int argc, const char *argv[]) {
   auto buffer2 = device->newBuffer(BUFFER_SIZE, MTL::ResourceStorageModeShared);
   auto buffer3 = device->newBuffer(BUFFER_SIZE, MTL::ResourceStorageModeShared);
   for (ssize_t i = 0; i < ARRAY_SIZE; i++) {
-    ((float *)buffer1->contents())[i] = i;
-    ((float *)buffer2->contents())[i] = i;
+    ((float *)buffer1->contents())[i] = 2 * M_PI * i / (ARRAY_SIZE + 1.0);
+    ((float *)buffer2->contents())[i] = 2 * M_PI * i / (ARRAY_SIZE + 1.0);
   }
 
   auto start = std::chrono::steady_clock::now();

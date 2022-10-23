@@ -2,7 +2,7 @@
 #include <metal_math>
 using namespace metal;
 
-float starter(float ecc, float M, float ome) {
+float starter(float M, float ecc, float ome) {
     const float FACTOR1 = 3 * M_PI_F / (M_PI_F - 6 / M_PI_F);
     const float FACTOR2 = 1.6 / (M_PI_F - 6 / M_PI_F);
     float M2 = M * M;
@@ -35,13 +35,18 @@ float refine(float M, float ecc, float ome, float E) {
 }
 
 
-kernel void work_on_arrays(device const float* ecc,
+kernel void solve_kepler(device const float* ecc,
                            device const float* mean_anom,
                            device float* ecc_anom,
                            uint index [[thread_position_in_grid]])
 {
-    float ome = 1.0 - ecc[index];
-    float start = starter(ecc[index], mean_anom[index], ome);
-    ecc_anom[index] = refine(mean_anom[index], ecc[index], ome, start);
-}
+    float M = mean_anom[index];
+    bool high = M > M_PI_F;
+    M = high ? 2 * M_PI_F - M : M;
 
+    float ome = 1.0 - ecc[index];
+    float E = starter(M, ecc[index], ome);
+    E = refine(M, ecc[index], ome, E);
+
+    ecc_anom[index] = high ? 2 * M_PI_F - E : E;
+}
